@@ -4,25 +4,28 @@ interface MacWindowProps {
   children: ReactNode;
   isDark: boolean;
   onToggleTheme: () => void;
+  onClose: () => void;
+  onMinimize: () => void;
+  onMaximize: () => void;
 }
 
-export default function MacWindow({ children, isDark, onToggleTheme }: MacWindowProps) {
+export default function MacWindow({ children, isDark, onToggleTheme, onClose, onMinimize, onMaximize }: MacWindowProps) {
   return (
     <div className={`flex flex-col w-full h-full ${isDark ? 'bg-[#201d1d] text-[#fdfcfc]' : 'bg-[#fcfcfc] text-[#1a1a1a]'}`}>
       
       {/* macOS Title Bar */}
-      <div className={`drag-handle flex items-center justify-between px-4 py-2 border-b cursor-grab active:cursor-grabbing ${isDark ? 'border-[#3d3838] bg-[#2a2626]' : 'border-gray-300 bg-[#f0f0f0]'}`}>
+      <div className={`drag-handle flex items-center justify-between px-4 py-3 border-b cursor-grab active:cursor-grabbing ${isDark ? 'border-[#3d3838] bg-[#2a2626]' : 'border-gray-300 bg-[#f0f0f0]'}`}>
         
         {/* Traffic Lights */}
         <div className="flex space-x-2">
-          <div className="w-3 h-3 rounded-full bg-[#ff3b30] border border-black/20" />
-          <div className="w-3 h-3 rounded-full bg-[#ff9f0a] border border-black/20" />
-          <div className="w-3 h-3 rounded-full bg-[#30d158] border border-black/20" />
+          <button onClick={onClose} className="w-3 h-3 rounded-full bg-[#ff3b30] border border-black/20 hover:brightness-75 transition-all" />
+          <button onClick={onMinimize} className="w-3 h-3 rounded-full bg-[#ff9f0a] border border-black/20 hover:brightness-75 transition-all" />
+          <button onClick={onMaximize} className="w-3 h-3 rounded-full bg-[#30d158] border border-black/20 hover:brightness-75 transition-all" />
         </div>
 
-        {/* Exact Title from Screenshot */}
-        <div className={`text-[11px] font-mono tracking-tight pointer-events-none ${isDark ? 'text-[#9a9898]' : 'text-gray-600'}`}>
-          codebind — OC | Mac specifications request — opencode — 121x32
+        {/* Exact Title */}
+        <div className={`text-[10px] font-mono tracking-tight pointer-events-none truncate px-2 ${isDark ? 'text-[#9a9898]' : 'text-gray-600'}`}>
+          codebind — OC | Mac specs — opencode
         </div>
 
         {/* Status Toggle */}
