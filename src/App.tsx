@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Rnd } from 'react-rnd';
 import MacWindow from './components/MacWindow';
 import TerminalUI from './components/TerminalUI';
@@ -6,45 +6,43 @@ import TerminalUI from './components/TerminalUI';
 function App() {
   const [isDark, setIsDark] = useState(false);
   const rndRef = useRef<Rnd>(null);
+  const [dimensions, setDimensions] = useState({ width: 400, height: 800 });
 
-  // Get iPhone screen dimensions
-  const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 400;
-  const screenHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+  useEffect(() => {
+    setDimensions({ width: window.innerWidth, height: window.innerHeight });
+  }, []);
 
   const handleClose = () => {
-    // Reset to center
-    rndRef.current?.updatePosition({ x: 10, y: 40 });
-    rndRef.current?.updateSize({ width: screenWidth - 20, height: screenHeight - 80 });
+    rndRef.current?.updatePosition({ x: 16, y: 80 });
+    rndRef.current?.updateSize({ width: dimensions.width - 32, height: 550 });
   };
 
   const handleMinimize = () => {
-    // Shrink to the bottom of the screen
-    rndRef.current?.updateSize({ width: screenWidth - 20, height: 100 });
-    rndRef.current?.updatePosition({ x: 10, y: screenHeight - 120 });
+    rndRef.current?.updateSize({ width: dimensions.width - 32, height: 60 });
+    rndRef.current?.updatePosition({ x: 16, y: dimensions.height - 80 });
   };
 
   const handleMaximize = () => {
-    // Fill the whole screen
-    rndRef.current?.updateSize({ width: screenWidth, height: screenHeight });
-    rndRef.current?.updatePosition({ x: 0, y: 0 });
+    rndRef.current?.updateSize({ width: dimensions.width - 16, height: dimensions.height - 32 });
+    rndRef.current?.updatePosition({ x: 8, y: 16 });
   };
 
   return (
-    <div className="h-[100dvh] w-screen bg-black relative overflow-hidden">
+    <div className="h-[100dvh] w-screen bg-black relative overflow-hidden flex items-center justify-center">
       <Rnd
         ref={rndRef}
         default={{
-          x: 10,
-          y: 40,
-          width: screenWidth - 20,
-          height: screenHeight - 80,
+          x: 16,
+          y: 80,
+          width: dimensions.width - 32,
+          height: 550, // Standard macOS window height
         }}
         minWidth={300}
         minHeight={100}
         bounds="parent"
         dragHandleClassName="drag-handle"
-        enableResizing={true}
-        className="shadow-2xl rounded-xl overflow-hidden border border-opencode-border"
+        enableResizing={true} // Drag the bottom to reveal the context!
+        className="shadow-2xl rounded-xl overflow-hidden border border-gray-400/30"
       >
         <MacWindow 
           isDark={isDark} 
