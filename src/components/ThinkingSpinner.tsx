@@ -1,34 +1,21 @@
 import { useState, useEffect } from 'react';
 
+// Exact frames from opencode/packages/tui/src/component/spinner-frames.ts
+const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+
 export default function ThinkingSpinner() {
   const [frame, setFrame] = useState(0);
-  
-  // OpenCode uses a bouncing scanner sequence
-  const frames = [
-    '⬝⬝⬝■⬩⬩··',
-    '⬝⬝■⬩⬩⬩··',
-    '⬝■⬩⬩⬩⬩··',
-    '■⬩⬩⬩⬩⬩··',
-    '⬝■⬩⬩⬩⬩··',
-    '⬝⬝■⬩⬩⬩··',
-    '⬝⬝⬝■⬩⬩··',
-    '⬝⬝⬝⬝■⬩··',
-    '⬝⬝⬝⬝⬝■··',
-    '⬝⬝⬝⬝⬝⬝■·',
-    '⬝⬝⬝⬝⬝■··',
-    '⬝⬝⬝⬝■⬩··',
-  ];
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setFrame((prev) => (prev + 1) % frames.length);
-    }, 80); // 80ms per frame for smooth animation
+      setFrame((prev) => (prev + 1) % SPINNER_FRAMES.length);
+    }, 80); // Official OpenCode TUI interval
     return () => clearInterval(timer);
-  }, [frames.length]);
+  }, []);
 
   return (
-    <span className="text-opencode-dim font-mono text-sm">
-      {frames[frame]}
+    <span className="text-opencode-green font-mono text-sm mr-2">
+      {SPINNER_FRAMES[frame]}
     </span>
   );
 }
