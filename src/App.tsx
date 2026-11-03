@@ -24,7 +24,8 @@ function App() {
         style={{ position: 'relative' }} // Ensure it stays centered
       >
         <MacWindow isDark={isDark} onToggleTheme={() => setIsDark(!isDark)}>
-          <TerminalUI serverUrl="http://192.168.1.24:4096" serverPassword="YourStrongPassword123" />
+          {/* Notice there are NO props here anymore */}
+          <TerminalUI />
         </MacWindow>
       </Rnd>
     </div>
