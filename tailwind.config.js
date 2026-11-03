@@ -1,23 +1,27 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
-      fontFamily: {
-        mono: ['SF Mono', 'Menlo', 'Monaco', 'Courier New', 'monospace'],
-      },
       colors: {
-        mac: {
-          red: '#FF5F56',
-          yellow: '#FFBD2E',
-          green: '#27C93F',
-          dark: '#1e1e1e',
-          light: '#ffffff',
+        opencode: {
+          bg: '#201d1d',       // Warm near-black
+          surface: '#302c2c',  // Input box / elevation
+          text: '#fdfcfc',     // Warm off-white
+          dim: '#9a9898',      // Dimmed text
+          border: '#3d3838',   // Flat borders
+          red: '#ff3b30',
+          yellow: '#ff9f0a',
+          green: '#30d158',
+          blue: '#007aff',
         }
-      }
+      },
+      fontFamily: {
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+      },
     },
   },
   plugins: [],
