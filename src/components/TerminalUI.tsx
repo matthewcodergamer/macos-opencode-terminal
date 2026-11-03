@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import ThinkingSpinner from './ThinkingSpinner';
+import { useState } from 'react';
+import CommandPalette from './CommandPalette';
 
 interface TerminalUIProps {
   serverUrl: string;
@@ -8,144 +8,102 @@ interface TerminalUIProps {
 
 export default function TerminalUI({ serverUrl, serverPassword }: TerminalUIProps) {
   const [inputText, setInputText] = useState('');
-  const [isThinking, setIsThinking] = useState(false);
-  const [messages, setMessages] = useState<any[]>([]);
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [isCommandOpen, setIsCommandOpen] = useState(false);
 
-  // Create the Auth header
-  const authHeader = `Basic ${btoa(`opencode:${serverPassword}`)}`;
-
-  // 1. Create a session when the app loads
-  useEffect(() => {
-    const createSession = async () => {
-      try {
-        const res = await fetch(`${serverUrl}/session`, {
-          method: 'POST',
-          headers: {
-            'Authorization': authHeader,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ title: "iPhone Session" })
-        });
-        const data = await res.json();
-        setSessionId(data.id);
-      } catch (err) {
-        console.error("Failed to connect to Mac server. Is it running?", err);
-      }
-    };
-    createSession();
-  }, [serverUrl, authHeader]);
-
-  // 2. Send a message to the AI
-  const handleSend = async () => {
-    if (!inputText.trim() || !sessionId) return;
-    
-    const userMsg = inputText;
-    setMessages((prev) => [...prev, { role: 'user', text: userMsg }]);
-    setInputText('');
-    setIsThinking(true);
-
-    try {
-      const res = await fetch(`${serverUrl}/session/${sessionId}/message`, {
-        method: 'POST',
-        headers: {
-          'Authorization': authHeader,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ content: userMsg })
-      });
-
-      if (!res.body) throw new Error("No response body");
-      
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let aiText = '';
-
-      setMessages((prev) => [...prev, { role: 'assistant', text: '' }]);
-      setIsThinking(false);
-
-      // Read the stream from OpenCode
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        
-        const chunk = decoder.decode(value);
-        aiText += chunk;
-        
-        // Update the last message in real-time
-        setMessages((prev) => {
-          const newMsgs = [...prev];
-          newMsgs[newMsgs.length - 1] = { role: 'assistant', text: aiText };
-          return newMsgs;
-        });
-      }
-    } catch (err) {
-      console.error(err);
-      setMessages((prev) => [...prev, { role: 'assistant', text: "Error: Could not reach the Mac server." }]);
-      setIsThinking(false);
-    }
-  };
+  // Exact ASCII Logo from the screenshot
+  const logo = `
+██████  ██████  ███████ ███    ██  ██████  ██████  ██████  ███████ 
+██   ██ ██   ██ ██      ████   ██ ██      ██    ██ ██   ██ ██      
+██   ██ ██████  █████   ██ ██  ██ ██      ██    ██ ██   ██ █████   
+██   ██ ██      ██      ██  ██ ██ ██      ██    ██ ██   ██ ██      
+ ██████ ██      ███████ ██   ████  ██████  ██████  ██████  ███████ `;
 
   return (
-    <div className="flex flex-col h-full w-full justify-between font-mono bg-opencode-bg">
-      {/* Top Session Bar */}
-      <div className="flex justify-between items-center px-4 py-3 text-xs sm:text-sm border-b border-opencode-border">
-        <span className="text-opencode-dim">{sessionId ? `Session: ${sessionId.slice(0,8)}` : 'Connecting...'}</span>
-        <button className="hover:text-opencode-blue transition-colors">+ New session</button>
-      </div>
+    <div className="flex flex-row h-full w-full font-mono overflow-hidden">
+      
+      {/* LEFT COLUMN: Main Terminal Area */}
+      <div className="flex flex-col flex-1 justify-between relative bg-inherit">
+        
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col items-center justify-center p-4">
+          
+          {/* Exact Blocky Logo */}
+          <pre className="text-[10px] sm:text-[12px] leading-[1.1] tracking-tighter mb-8 font-bold opacity-80 text-current">
+            {logo}
+          </pre>
 
-      {/* Main Chat Area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
-        {messages.length === 0 && !isThinking && (
-          <div className="flex items-center justify-center h-full">
-             <pre className="ascii-logo text-opencode-text font-bold">
-{`█▀▀█ █▀▀█ █▀▀█ █▀▀▄ █▀▀▀ █▀▀█ █▀▀█ █▀▀█ 
-█  █ █  █ █^^^ █  █ █    █  █ █  █ █  █ 
-▀▀▀▀ █▀▀▀ ▀▀▀▀ ▀~~▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀`}
-             </pre>
+          {/* Input Box */}
+          <div className="w-full max-w-lg flex flex-col gap-1">
+            <div className="flex items-center border-l-2 border-current pl-2">
+              <span className="opacity-50 mr-2 text-sm">Ask anything... "Fix broken tests"</span>
+            </div>
+            
+            {/* Build Status */}
+            <div className="flex items-center text-xs opacity-60 pl-3 mt-1">
+              <span className="mr-1">■</span> Build · minimax-m2.5-free · 5.2s
+            </div>
+            
+            {/* Footer Navigation */}
+            <div className="flex justify-end gap-4 text-xs opacity-50 mt-2 pr-2">
+              <span>tab agents</span>
+              <span 
+                className="cursor-pointer hover:opacity-100"
+                onClick={() => setIsCommandOpen(true)}
+              >
+                ctrl+p commands
+              </span>
+            </div>
           </div>
-        )}
+        </div>
 
-        {messages.map((msg, i) => (
-          <div key={i} className="flex flex-col gap-2">
-            {msg.role === 'user' ? (
-              <div className="text-opencode-blue text-sm">{msg.text}</div>
-            ) : (
-              <div className="text-opencode-text text-sm whitespace-pre-wrap">{msg.text}</div>
-            )}
+        {/* Tip Line */}
+        <div className="p-4 flex justify-between items-end text-xs opacity-50">
+          <div className="flex items-center gap-2">
+            <span className="text-[#ff9f0a]">●</span> Tip Press Ctrl+C when typing to clear the input field
           </div>
-        ))}
-
-        {isThinking && (
-          <div className="flex items-center text-opencode-dim text-sm">
-            <ThinkingSpinner />
-            <span>Thinking...</span>
-          </div>
-        )}
-      </div>
-
-      {/* Bottom Input Box */}
-      <div className="px-4 pb-4">
-        <div className="flex items-center bg-opencode-surface border border-opencode-border rounded-md px-3 py-3 focus-within:border-opencode-blue">
-          <span className="text-opencode-text cursor-blink mr-2 text-sm">█</span>
-          <input
-            type="text"
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder={sessionId ? 'Ask anything... "Fix a TODO in the codebase"' : 'Waiting for Mac connection...'}
-            disabled={!sessionId}
-            className="flex-1 bg-transparent text-opencode-text placeholder-opencode-dim outline-none text-xs sm:text-sm"
-            autoComplete="off"
-            autoCorrect="off"
-            autoCapitalize="none"
-            spellCheck="false"
-          />
-          <button onClick={handleSend} className="text-opencode-dim hover:text-opencode-text text-xs sm:text-sm ml-2">
-            send
-          </button>
+          <span>1.2.26</span>
         </div>
       </div>
+
+      {/* RIGHT COLUMN: Sidebar */}
+      <div className="w-[300px] border-l border-gray-300/30 flex flex-col p-4 text-xs gap-6 overflow-y-auto hidden md:flex">
+        
+        {/* Mac Specifications / Context */}
+        <div>
+          <h3 className="font-bold mb-2">Mac specifications request</h3>
+          <div className="flex flex-col gap-1 opacity-70">
+            <span className="font-bold">Context</span>
+            <span>11,764 tokens</span>
+            <span>6% used</span>
+            <span>$0.00 spent</span>
+            
+            <span className="font-bold mt-2">LSP</span>
+            <span>LSPs will activate as files are read</span>
+          </div>
+        </div>
+
+        {/* Getting Started Box */}
+        <div className="border border-gray-300/30 rounded p-3 mt-auto relative">
+          <button className="absolute top-2 right-2 opacity-50 hover:opacity-100">×</button>
+          <h4 className="font-bold mb-2 flex items-center gap-1">
+            <span>◆</span> Getting started
+          </h4>
+          <p className="opacity-70 mb-3 leading-relaxed">
+            OpenCode includes free models so you can start immediately.
+          </p>
+          <p className="opacity-70 mb-3 leading-relaxed">
+            Connect from 75+ providers to use other models, including Claude, GPT, Gemini etc
+          </p>
+          <div className="flex justify-between items-center mt-4">
+            <span className="font-bold">Connect provider</span>
+            <span className="opacity-50">/connect</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Command Palette Overlay */}
+      {isCommandOpen && <CommandPalette onClose={() => setIsCommandOpen(false)} />}
+      
     </div>
   );
 }
