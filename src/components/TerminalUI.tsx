@@ -1,84 +1,95 @@
 import { useState } from 'react';
 import ThinkingSpinner from './ThinkingSpinner';
-import StreamingText from './StreamingText';
+import DiffView from './DiffView';
 
 export default function TerminalUI() {
   const [inputText, setInputText] = useState('');
   const [isThinking, setIsThinking] = useState(false);
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
 
   const handleSend = () => {
     if (!inputText.trim()) return;
     
-    setMessages((prev) => [...prev, inputText]);
+    setMessages((prev) => [...prev, { role: 'user', text: inputText }]);
     setInputText('');
     setIsThinking(true);
+
+    // Simulate the OpenCode agent loop
+    setTimeout(() => {
+      setIsThinking(false);
+      setMessages((prev) => [
+        ...prev, 
+        { 
+          role: 'assistant', 
+          text: 'I have updated the registration form to include the date of birth field.',
+          diff: [
+            { lineNumber: 48, type: 'context', content: '<Label htmlFor="email">Email address</Label>' },
+            { lineNumber: 49, type: 'context', content: '<Input' },
+            { lineNumber: 50, type: 'context', content: '  id="email"' },
+            { lineNumber: 51, type: 'context', content: '  type="email"' },
+            { lineNumber: 52, type: 'context', content: '  required' },
+            { lineNumber: 53, type: 'remove', content: '  tabIndex={2}' },
+            { lineNumber: 54, type: 'add', content: '  tabIndex={3}' },
+            { lineNumber: 55, type: 'add', content: '  name="email"' },
+            { lineNumber: 56, type: 'context', content: '  placeholder="email@example.com"' },
+            { lineNumber: 57, type: 'context', content: '/>' }
+          ]
+        }
+      ]);
+    }, 2000);
   };
 
   return (
-    <div className="flex flex-col h-full w-full justify-between font-mono">
-      
+    <div className="flex flex-col h-full w-full justify-between font-mono bg-opencode-bg">
       {/* Top Session Bar */}
-      <div className="flex justify-between items-center px-4 py-3 text-xs sm:text-sm">
+      <div className="flex justify-between items-center px-4 py-3 text-xs sm:text-sm border-b border-opencode-border">
         <span className="text-opencode-dim">New session</span>
         <button className="hover:text-opencode-blue transition-colors">+ New session</button>
       </div>
 
-      {/* Center: Logo & Chat Stream */}
-      <div className="flex-1 flex flex-col items-center justify-center overflow-y-auto px-4 py-6">
-        
-        {/* Show logo only when no messages */}
+      {/* Main Chat & Diff Area */}
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
         {messages.length === 0 && !isThinking && (
-          <pre className="ascii-logo text-opencode-text font-bold mb-8">
+          <div className="flex items-center justify-center h-full">
+             <pre className="ascii-logo text-opencode-text font-bold">
 {`█▀▀█ █▀▀█ █▀▀█ █▀▀▄ █▀▀▀ █▀▀█ █▀▀█ █▀▀█ 
 █  █ █  █ █^^^ █  █ █    █  █ █  █ █  █ 
 ▀▀▀▀ █▀▀▀ ▀▀▀▀ ▀~~▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀`}
-          </pre>
+             </pre>
+          </div>
         )}
 
-        {/* Chat Stream */}
-        <div className="w-full max-w-2xl flex flex-col gap-4">
-          {messages.map((msg, i) => (
-            <div key={i} className="flex flex-col">
-              <span className="text-opencode-blue text-xs mb-1">You:</span>
-              <div className="text-opencode-text text-sm">{msg}</div>
-            </div>
-          ))}
+        {messages.map((msg, i) => (
+          <div key={i} className="flex flex-col gap-2">
+            {msg.role === 'user' ? (
+              <div className="text-opencode-blue text-sm">{msg.text}</div>
+            ) : (
+              <div className="text-opencode-text text-sm">
+                {msg.text}
+                {msg.diff && <DiffView lines={msg.diff} />}
+              </div>
+            )}
+          </div>
+        ))}
 
-          {/* Thinking State */}
-          {isThinking && (
-            <div className="flex flex-col gap-2">
-              <span className="text-opencode-dim text-xs">Thinking...</span>
-              <ThinkingSpinner />
-              {/* Simulate AI Response Streaming after 2 seconds */}
-              {setTimeout(() => {
-                setIsThinking(false);
-                setMessages(prev => [...prev, "```ts\nconsole.log('OpenCode is ready');\n```"]);
-              }, 2000) && null}
-            </div>
-          )}
-
-          {/* AI Response Streaming */}
-          {!isThinking && messages.length > 0 && messages[messages.length - 1].includes('```') && (
-            <StreamingText 
-              text={messages[messages.length - 1].replace(/```[a-z]*\n?/g, '')} 
-            />
-          )}
-        </div>
+        {/* Official Thinking State */}
+        {isThinking && (
+          <div className="flex items-center text-opencode-dim text-sm">
+            <ThinkingSpinner />
+            <span>Thinking...</span>
+          </div>
+        )}
       </div>
 
-      {/* Bottom: Input Box & Status */}
+      {/* Bottom Input Box */}
       <div className="px-4 pb-4">
-        <div className="flex items-center bg-opencode-surface border border-opencode-border rounded-md px-3 py-3 focus-within:border-opencode-blue focus-within:ring-1 focus-within:ring-opencode-blue">
+        <div className="flex items-center bg-opencode-surface border border-opencode-border rounded-md px-3 py-3">
           <span className="text-opencode-text cursor-blink mr-2 text-sm">█</span>
-          
           <input
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleSend();
-            }}
+            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             placeholder='Ask anything... "Fix a TODO in the codebase"'
             className="flex-1 bg-transparent text-opencode-text placeholder-opencode-dim outline-none text-xs sm:text-sm"
             autoComplete="off"
@@ -86,21 +97,9 @@ export default function TerminalUI() {
             autoCapitalize="none"
             spellCheck="false"
           />
-          
-          <button 
-            className="text-opencode-dim hover:text-opencode-text text-xs sm:text-sm ml-2"
-            onClick={handleSend}
-          >
+          <button onClick={handleSend} className="text-opencode-dim hover:text-opencode-text text-xs sm:text-sm ml-2">
             send
           </button>
-        </div>
-
-        <div className="flex justify-between items-center mt-3 text-[10px] sm:text-xs text-opencode-dim">
-          <span>~/Secure-backend</span>
-          <div className="flex gap-4">
-            <span><span className="text-opencode-text">shift+tab</span> agents</span>
-            <span><span className="text-opencode-text">ctrl+p</span> commands</span>
-          </div>
         </div>
       </div>
     </div>
