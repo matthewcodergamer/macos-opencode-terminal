@@ -15,9 +15,11 @@ export default function TerminalUI() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setInputText(val);
+    
+    // Open commands if user types '/' and it's the first character
     if (val === '/') {
       setIsCommandOpen(true);
-      setInputText('');
+      setInputText(''); 
     }
   };
 
@@ -66,7 +68,7 @@ export default function TerminalUI() {
           </div>
         </div>
 
-        {/* Footer Tip (Stays at the bottom of the terminal area) */}
+        {/* Footer Tip */}
         <div className="px-4 pb-3 flex justify-between items-end text-[9px] opacity-50 min-w-0">
           <div className="flex items-center gap-2 truncate">
             <span className="text-[#ff9f0a]">●</span> Tip Press Ctrl+C when typing to clear the input field
@@ -107,6 +109,7 @@ export default function TerminalUI() {
         </div>
       </div>
 
+      {/* The fully interactive Command Palette */}
       {isCommandOpen && <CommandPalette onClose={() => setIsCommandOpen(false)} />}
     </div>
   );
