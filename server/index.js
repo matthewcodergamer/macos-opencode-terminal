@@ -1,30 +1,46 @@
-const { WebSocketServer } = require('ws');
-const pty = require('node-pty');
+const express = require('express');
+const cors = require('cors');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const wss = new WebSocketServer({ port: 3000 });
+const app = express();
 
-wss.on('connection', (ws) => {
-  console.log('Client connected');
+// 🔥 IMPORTANT: Change this to a strong password!
+const AUTH_TOKEN = "my-super-secret-password-123"; 
 
-  // Spawn the OpenCode process in a pseudo-terminal
-  const shell = pty.spawn('opencode', [], {
-    name: 'xterm-color',
-    cols: 80,
-    rows: 24,
-    cwd: process.env.HOME,
-    env: process.env
-  });
+// Allow your GitHub Pages frontend to connect
+app.use(cors({
+  origin: 'https://matthewcodergamer.github.io',
+  credentials: true
+}));
 
-  // Send terminal output to the browser
-  shell.onData((data) => ws.send(data));
+// Simple Authentication Middleware
+app.use((req, res, next) => {
+  // Allow health checks
+  if (req.path === '/health') return next();
 
-  // Send browser keystrokes to the terminal
-  ws.on('message', (msg) => shell.write(msg));
-
-  ws.on('close', () => {
-    shell.kill();
-    console.log('Client disconnected');
-  });
+  const token = req.headers.authorization;
+  if (token !== `Bearer ${AUTH_TOKEN}`) {
+    return res.status(401).json({ error: 'Unauthorized: Missing or invalid token' });
+  }
+  next();
 });
 
-console.log('WebSocket server running on port 3000');
+// Health check endpoint
+app.get('/health', (req, res) => res.send('Proxy is running'));
+
+// Proxy all requests to the local OpenCode server on port 4096
+app.use('/', createProxyMiddleware({
+  target: 'http://127.0.0.1:4096',
+  changeOrigin: true,
+  ws: true, // Enable WebSockets for streaming responses
+  onError: (err, req, res) => {
+    console.error('Proxy Error:', err);
+    res.status(500).send('OpenCode backend is unreachable. Is "opencode serve" running?');
+  }
+}));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Secure Proxy running on port ${PORT}`);
+  console.log(`Targeting OpenCode API at http://127.0.0.1:4096`);
+});
