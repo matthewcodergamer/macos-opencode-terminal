@@ -1,42 +1,42 @@
 import React from 'react';
 
 interface MacWindowProps {
-  title: string;
   children: React.ReactNode;
   isDark: boolean;
   onToggleTheme: () => void;
 }
 
-export default function MacWindow({ title, children, isDark, onToggleTheme }: MacWindowProps) {
+export default function MacWindow({ children, isDark, onToggleTheme }: MacWindowProps) {
   return (
-    <div className={`w-full max-w-4xl h-[90vh] flex flex-col rounded-xl overflow-hidden shadow-2xl border ${isDark ? 'border-neutral-700 bg-neutral-800/90 backdrop-blur-xl' : 'border-gray-300 bg-white/90 backdrop-blur-xl'}`}>
+    <div className={`flex flex-col w-full h-full ${isDark ? 'bg-opencode-bg text-opencode-text' : 'bg-[#fdfcfc] text-[#201d1d]'}`}>
       
-      {/* Title Bar */}
-      <div className={`flex items-center px-4 py-2 border-b select-none ${isDark ? 'border-neutral-700 bg-neutral-800/50' : 'border-gray-300 bg-gray-100/50'}`}>
+      {/* macOS Title Bar */}
+      <div className={`flex items-center justify-between px-4 py-3 border-b ${isDark ? 'border-opencode-border' : 'border-gray-300'}`}>
         
         {/* Traffic Lights */}
-        <div className="flex space-x-2 mr-4">
-          <div className="w-3 h-3 rounded-full bg-mac-red hover:brightness-75 cursor-pointer" />
-          <div className="w-3 h-3 rounded-full bg-mac-yellow hover:brightness-75 cursor-pointer" />
-          <div className="w-3 h-3 rounded-full bg-mac-green hover:brightness-75 cursor-pointer" />
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 rounded-full bg-opencode-red border border-black/20" />
+          <div className="w-3 h-3 rounded-full bg-opencode-yellow border border-black/20" />
+          <div className="w-3 h-3 rounded-full bg-opencode-green border border-black/20" />
         </div>
 
         {/* Title */}
-        <div className={`flex-1 text-center text-xs font-semibold font-mono ${isDark ? 'text-neutral-400' : 'text-gray-500'}`}>
-          {title}
+        <div className={`text-xs font-mono tracking-tight ${isDark ? 'text-opencode-dim' : 'text-gray-500'}`}>
+          sollomzi2017 — OpenCode — opencode — Start_Secure
         </div>
 
-        {/* Theme Toggle Button */}
+        {/* Status / Theme Toggle */}
         <button 
           onClick={onToggleTheme}
-          className={`text-xs px-2 py-1 rounded ${isDark ? 'bg-neutral-700 text-neutral-300 hover:bg-neutral-600' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+          className={`text-xs font-mono flex items-center gap-2 ${isDark ? 'text-opencode-dim' : 'text-gray-500'} hover:text-opencode-blue transition-colors`}
         >
-          {isDark ? 'Light' : 'Dark'}
+          <span>● demo</span>
+          <span>{isDark ? 'dark' : 'light'}</span>
         </button>
       </div>
 
-      {/* Terminal Content */}
-      <div className="flex-1 relative p-2">
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col relative overflow-hidden">
         {children}
       </div>
     </div>
