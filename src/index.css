@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,16 +9,15 @@ html, body, #root {
   height: 100dvh;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Stops iOS rubber-banding */
+  overflow: hidden;
   background-color: #000; 
 }
 
 body {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: 'Berkeley Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Blinking cursor animation */
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
@@ -25,12 +26,12 @@ body {
   animation: blink 1s step-end infinite;
 }
 
-/* ASCII Logo adjustment so it doesn't wrap on mobile */
 .ascii-logo {
   font-size: 8px;
   line-height: 1.1;
-  letter-spacing: -0.05em;
+  letter-spacing: 0px;
   white-space: pre;
+  font-family: 'Berkeley Mono', 'JetBrains Mono', monospace;
 }
 @media (min-width: 400px) {
   .ascii-logo { font-size: 10px; }
