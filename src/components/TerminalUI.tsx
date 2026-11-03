@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import CommandPalette from './CommandPalette';
 
 export default function TerminalUI() {
   const [inputText, setInputText] = useState('');
   const [isCommandOpen, setIsCommandOpen] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const logo = `
 ██████  ██████  ███████ ███    ██  ██████  ██████  ██████  ███████ 
@@ -12,15 +13,40 @@ export default function TerminalUI() {
 ██   ██ ██      ██      ██  ██ ██ ██      ██    ██ ██   ██ ██      
  ██████ ██      ███████ ██   ████  ██████  ██████  ██████  ███████ `;
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
     setInputText(val);
     
-    // Open commands if user types '/' and it's the first character
+    // Open commands if user types '/' as the first character
     if (val === '/') {
       setIsCommandOpen(true);
       setInputText(''); 
     }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // If they have a physical keyboard, Enter sends, Shift+Enter makes a new line
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const handleSend = () => {
+    if (!inputText.trim()) return;
+    // Here you would normally send the inputText to the Mac server
+    console.log("Sending prompt:", inputText);
+    
+    // Clear the input after sending
+    setInputText('');
+    if (textareaRef.current) textareaRef.current.style.height = 'auto';
+  };
+
+  // Auto-resize the textarea as you type
+  const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    const target = e.target as HTMLTextAreaElement;
+    target.style.height = 'auto';
+    target.style.height = `${target.scrollHeight}px`;
   };
 
   return (
@@ -42,14 +68,26 @@ export default function TerminalUI() {
           </div>
 
           <div className="w-full max-w-lg flex flex-col gap-1 px-2">
-            <div className="flex items-center border-l-2 border-current pl-2">
-              <input
-                type="text"
+            
+            {/* Input Container */}
+            <div className="flex items-start border-l-2 border-current pl-2 relative">
+              <textarea
+                ref={textareaRef}
                 value={inputText}
                 onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                onInput={handleInput}
                 placeholder='Ask anything... "Fix broken tests"'
-                className="bg-transparent outline-none w-full text-[11px] sm:text-xs placeholder:opacity-50"
+                className="bg-transparent outline-none w-full text-[11px] sm:text-xs placeholder:opacity-50 resize-none overflow-hidden min-h-[20px] pt-1"
+                rows={1}
               />
+              {/* Send Button */}
+              <button 
+                onClick={handleSend}
+                className="text-[10px] font-bold opacity-50 hover:opacity-100 ml-2 mt-1 uppercase"
+              >
+                send
+              </button>
             </div>
             
             <div className="flex items-center text-[10px] opacity-60 pl-3 mt-1">
@@ -77,7 +115,7 @@ export default function TerminalUI() {
         </div>
       </div>
 
-      {/* CONTEXT AREA (Hidden by default, revealed when dragging window taller) */}
+      {/* CONTEXT AREA (Hidden by default) */}
       <div className="w-full border-t border-gray-300/50 flex flex-col p-4 text-[11px] gap-6 bg-[#f9f9f9]/50 flex-none">
         <div>
           <h3 className="font-bold mb-2">Mac specifications request</h3>
@@ -109,7 +147,6 @@ export default function TerminalUI() {
         </div>
       </div>
 
-      {/* The fully interactive Command Palette */}
       {isCommandOpen && <CommandPalette onClose={() => setIsCommandOpen(false)} />}
     </div>
   );
