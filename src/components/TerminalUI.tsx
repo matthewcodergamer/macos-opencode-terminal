@@ -1,16 +1,10 @@
 import { useState } from 'react';
 import CommandPalette from './CommandPalette';
 
-interface TerminalUIProps {
-  serverUrl: string;
-  serverPassword: string;
-}
-
-export default function TerminalUI({ serverUrl, serverPassword }: TerminalUIProps) {
+export default function TerminalUI() {
   const [inputText, setInputText] = useState('');
   const [isCommandOpen, setIsCommandOpen] = useState(false);
 
-  // Exact ASCII Logo from the screenshot
   const logo = `
 ██████  ██████  ███████ ███    ██  ██████  ██████  ██████  ███████ 
 ██   ██ ██   ██ ██      ████   ██ ██      ██    ██ ██   ██ ██      
@@ -24,26 +18,28 @@ export default function TerminalUI({ serverUrl, serverPassword }: TerminalUIProp
       {/* LEFT COLUMN: Main Terminal Area */}
       <div className="flex flex-col flex-1 justify-between relative bg-inherit">
         
-        {/* Main Content Area */}
         <div className="flex-1 flex flex-col items-center justify-center p-4">
           
-          {/* Exact Blocky Logo */}
           <pre className="text-[10px] sm:text-[12px] leading-[1.1] tracking-tighter mb-8 font-bold opacity-80 text-current">
             {logo}
           </pre>
 
-          {/* Input Box */}
           <div className="w-full max-w-lg flex flex-col gap-1">
+            {/* Actual Input Field */}
             <div className="flex items-center border-l-2 border-current pl-2">
-              <span className="opacity-50 mr-2 text-sm">Ask anything... "Fix broken tests"</span>
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder='Ask anything... "Fix broken tests"'
+                className="bg-transparent outline-none w-full text-sm placeholder:opacity-50"
+              />
             </div>
             
-            {/* Build Status */}
             <div className="flex items-center text-xs opacity-60 pl-3 mt-1">
               <span className="mr-1">■</span> Build · minimax-m2.5-free · 5.2s
             </div>
             
-            {/* Footer Navigation */}
             <div className="flex justify-end gap-4 text-xs opacity-50 mt-2 pr-2">
               <span>tab agents</span>
               <span 
@@ -56,7 +52,6 @@ export default function TerminalUI({ serverUrl, serverPassword }: TerminalUIProp
           </div>
         </div>
 
-        {/* Tip Line */}
         <div className="p-4 flex justify-between items-end text-xs opacity-50">
           <div className="flex items-center gap-2">
             <span className="text-[#ff9f0a]">●</span> Tip Press Ctrl+C when typing to clear the input field
@@ -67,8 +62,6 @@ export default function TerminalUI({ serverUrl, serverPassword }: TerminalUIProp
 
       {/* RIGHT COLUMN: Sidebar */}
       <div className="w-[300px] border-l border-gray-300/30 flex flex-col p-4 text-xs gap-6 overflow-y-auto hidden md:flex">
-        
-        {/* Mac Specifications / Context */}
         <div>
           <h3 className="font-bold mb-2">Mac specifications request</h3>
           <div className="flex flex-col gap-1 opacity-70">
@@ -82,7 +75,6 @@ export default function TerminalUI({ serverUrl, serverPassword }: TerminalUIProp
           </div>
         </div>
 
-        {/* Getting Started Box */}
         <div className="border border-gray-300/30 rounded p-3 mt-auto relative">
           <button className="absolute top-2 right-2 opacity-50 hover:opacity-100">×</button>
           <h4 className="font-bold mb-2 flex items-center gap-1">
@@ -101,9 +93,7 @@ export default function TerminalUI({ serverUrl, serverPassword }: TerminalUIProp
         </div>
       </div>
 
-      {/* Command Palette Overlay */}
       {isCommandOpen && <CommandPalette onClose={() => setIsCommandOpen(false)} />}
-      
     </div>
   );
 }
