@@ -8,11 +8,11 @@ module.exports = {
     extend: {
       colors: {
         opencode: {
-          bg: '#201d1d',       // Warm near-black
-          surface: '#302c2c',  // Input box / elevation
+          bg: '#201d1d',       // Warm near-black canvas
+          surface: '#302c2c',  // Elevation shift for inputs
           text: '#fdfcfc',     // Warm off-white
           dim: '#9a9898',      // Dimmed text
-          border: '#3d3838',   // Flat borders
+          border: '#3d3838',   // Flat border ring
           red: '#ff3b30',
           yellow: '#ff9f0a',
           green: '#30d158',
