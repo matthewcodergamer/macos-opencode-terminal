@@ -1,23 +1,18 @@
 import React, { useState } from 'react';
 import MacWindow from './components/MacWindow';
-import Terminal from './components/Terminal';
+import TerminalUI from './components/TerminalUI';
 
 function App() {
   const [isDark, setIsDark] = useState(true);
-  const [wsUrl, setWsUrl] = useState('wss://YOUR_VPS_IP:3000'); // 🔥 UPDATE THIS
 
   return (
-    <div className={`flex items-center justify-center h-screen w-screen transition-colors duration-300 ${isDark ? 'bg-neutral-900' : 'bg-gray-200'}`}>
-      
-      {/* macOS Window */}
-      <MacWindow 
-        title="opencode — opencode — Start_Secure"
-        isDark={isDark}
-        onToggleTheme={() => setIsDark(!isDark)}
-      >
-        <Terminal wsUrl={wsUrl} isDark={isDark} />
-      </MacWindow>
-
+    <div className="h-[100dvh] w-full bg-black p-2 sm:p-8 flex items-center justify-center">
+      {/* Outer Window Frame */}
+      <div className="w-full max-w-3xl h-full sm:h-[80vh] rounded-xl overflow-hidden shadow-2xl border border-opencode-border">
+        <MacWindow isDark={isDark} onToggleTheme={() => setIsDark(!isDark)}>
+          <TerminalUI />
+        </MacWindow>
+      </div>
     </div>
   );
 }
