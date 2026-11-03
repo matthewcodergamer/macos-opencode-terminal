@@ -13,35 +13,36 @@ function App() {
   }, []);
 
   const handleClose = () => {
-    rndRef.current?.updatePosition({ x: 16, y: 80 });
-    rndRef.current?.updateSize({ width: dimensions.width - 32, height: 550 });
+    // Reset to the compact default size and center it
+    rndRef.current?.updatePosition({ x: 8, y: 60 });
+    rndRef.current?.updateSize({ width: dimensions.width - 16, height: 420 });
   };
 
   const handleMinimize = () => {
-    rndRef.current?.updateSize({ width: dimensions.width - 32, height: 60 });
-    rndRef.current?.updatePosition({ x: 16, y: dimensions.height - 80 });
+    rndRef.current?.updateSize({ width: dimensions.width - 16, height: 60 });
+    rndRef.current?.updatePosition({ x: 8, y: dimensions.height - 80 });
   };
 
   const handleMaximize = () => {
-    rndRef.current?.updateSize({ width: dimensions.width - 16, height: dimensions.height - 32 });
-    rndRef.current?.updatePosition({ x: 8, y: 16 });
+    rndRef.current?.updateSize({ width: dimensions.width, height: dimensions.height });
+    rndRef.current?.updatePosition({ x: 0, y: 0 });
   };
 
   return (
-    <div className="h-[100dvh] w-screen bg-black relative overflow-hidden flex items-center justify-center">
+    <div className="h-[100dvh] w-screen bg-black relative overflow-hidden flex items-start justify-center">
       <Rnd
         ref={rndRef}
         default={{
-          x: 16,
-          y: 80,
-          width: dimensions.width - 32,
-          height: 550, // Standard macOS window height
+          x: 8, // Closer to the left edge
+          y: 60, // Slight gap at the top
+          width: dimensions.width - 16, // Closer to the right edge
+          height: 420, // Compact height (hides the context by default)
         }}
         minWidth={300}
         minHeight={100}
         bounds="parent"
         dragHandleClassName="drag-handle"
-        enableResizing={true} // Drag the bottom to reveal the context!
+        enableResizing={true} // Allows you to drag the bottom down to see the context!
         className="shadow-2xl rounded-xl overflow-hidden border border-gray-400/30"
       >
         <MacWindow 
