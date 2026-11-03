@@ -4,29 +4,27 @@ import MacWindow from './components/MacWindow';
 import TerminalUI from './components/TerminalUI';
 
 function App() {
-  const [isDark, setIsDark] = useState(true);
-  
-  // 🔥 YOUR MAC'S LOCAL IP AND PASSWORD
-  const serverUrl = "http://192.168.1.24:4096";
-  const serverPassword = "YourStrongPassword123"; // Must match the Mac terminal!
+  // Default to light theme to match the screenshots
+  const [isDark, setIsDark] = useState(false);
 
   return (
-    <div className="h-[100dvh] w-full bg-black relative overflow-hidden flex items-center justify-center">
+    <div className="h-[100dvh] w-full bg-black relative overflow-hidden flex items-center justify-center p-2 sm:p-4">
       <Rnd
         default={{
-          x: (window.innerWidth - 800) / 2,
-          y: (window.innerHeight - 600) / 2,
-          width: 800,
-          height: 600,
+          x: 0,
+          y: 0,
+          width: 1024, // Wider to fit the sidebar
+          height: 600, // Standard terminal height
         }}
-        minWidth={400}
-        minHeight={300}
+        minWidth={320}
+        minHeight={400}
         bounds="parent"
         dragHandleClassName="drag-handle"
-        className="shadow-2xl rounded-xl overflow-hidden border border-opencode-border"
+        className="shadow-2xl rounded-lg overflow-hidden border border-opencode-border mx-auto"
+        style={{ position: 'relative' }} // Ensure it stays centered
       >
         <MacWindow isDark={isDark} onToggleTheme={() => setIsDark(!isDark)}>
-          <TerminalUI serverUrl={serverUrl} serverPassword={serverPassword} />
+          <TerminalUI serverUrl="http://192.168.1.24:4096" serverPassword="YourStrongPassword123" />
         </MacWindow>
       </Rnd>
     </div>
