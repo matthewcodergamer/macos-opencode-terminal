@@ -14,24 +14,24 @@ export default function MacWindow({ children, isDark, onToggleTheme, onClose, on
     <div className={`flex flex-col w-full h-full ${isDark ? 'bg-[#201d1d] text-[#fdfcfc]' : 'bg-[#fcfcfc] text-[#1a1a1a]'}`}>
       
       {/* macOS Title Bar */}
-      <div className={`drag-handle flex items-center justify-between px-4 py-3 border-b cursor-grab active:cursor-grabbing ${isDark ? 'border-[#3d3838] bg-[#2a2626]' : 'border-gray-300 bg-[#f0f0f0]'}`}>
+      <div className={`drag-handle flex items-center justify-between px-3 py-2.5 border-b cursor-grab active:cursor-grabbing ${isDark ? 'border-[#3d3838] bg-[#2a2626]' : 'border-gray-300 bg-[#f0f0f0]'}`}>
         
         {/* Traffic Lights */}
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 shrink-0">
           <button onClick={onClose} className="w-3 h-3 rounded-full bg-[#ff3b30] border border-black/20 hover:brightness-75 transition-all" />
           <button onClick={onMinimize} className="w-3 h-3 rounded-full bg-[#ff9f0a] border border-black/20 hover:brightness-75 transition-all" />
           <button onClick={onMaximize} className="w-3 h-3 rounded-full bg-[#30d158] border border-black/20 hover:brightness-75 transition-all" />
         </div>
 
-        {/* Exact Title */}
-        <div className={`text-[10px] font-mono tracking-tight pointer-events-none truncate px-2 ${isDark ? 'text-[#9a9898]' : 'text-gray-600'}`}>
-          codebind — OC | Mac specs — opencode
+        {/* Clean Title */}
+        <div className={`text-[11px] font-mono tracking-tight pointer-events-none px-2 flex-1 text-center ${isDark ? 'text-[#9a9898]' : 'text-gray-600'}`}>
+          opencode
         </div>
 
         {/* Status Toggle */}
         <button 
           onClick={onToggleTheme}
-          className={`text-[10px] font-mono flex items-center gap-2 ${isDark ? 'text-[#9a9898]' : 'text-gray-500'} hover:text-[#007aff] transition-colors`}
+          className={`text-[10px] font-mono flex items-center gap-1 shrink-0 ${isDark ? 'text-[#9a9898]' : 'text-gray-500'} hover:text-[#007aff] transition-colors`}
         >
           <span>● demo</span>
           <span>{isDark ? 'dark' : 'light'}</span>
