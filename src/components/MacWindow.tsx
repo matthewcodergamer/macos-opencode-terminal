@@ -20,15 +20,15 @@ export default function MacWindow({ children, isDark, onToggleTheme }: MacWindow
           <div className="w-3 h-3 rounded-full bg-opencode-green border border-black/20" />
         </div>
 
-        {/* Title */}
-        <div className={`text-xs font-mono tracking-tight ${isDark ? 'text-opencode-dim' : 'text-gray-500'}`}>
-          sollomzi2017 — OpenCode — opencode — Start_Secure
+        {/* Title - Exactly as in screenshot */}
+        <div className={`text-[10px] sm:text-xs font-mono tracking-tight ${isDark ? 'text-opencode-dim' : 'text-gray-500'}`}>
+          sollomzi2017 — OpenCode — opencode — Start_Secure.command
         </div>
 
         {/* Status / Theme Toggle */}
         <button 
           onClick={onToggleTheme}
-          className={`text-xs font-mono flex items-center gap-2 ${isDark ? 'text-opencode-dim' : 'text-gray-500'} hover:text-opencode-blue transition-colors`}
+          className={`text-[10px] sm:text-xs font-mono flex items-center gap-2 ${isDark ? 'text-opencode-dim' : 'text-gray-500'} hover:text-opencode-blue transition-colors`}
         >
           <span>● demo</span>
           <span>{isDark ? 'dark' : 'light'}</span>
