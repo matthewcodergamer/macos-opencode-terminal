@@ -2,19 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+html, body, #root {
+  height: 100%;
+  height: 100dvh;
   margin: 0;
   padding: 0;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+  overflow: hidden; /* Stops iOS rubber-banding */
+  background-color: #000; 
 }
 
-/* Custom scrollbar for the terminal */
-.xterm-viewport::-webkit-scrollbar {
-  width: 8px;
+body {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  -webkit-font-smoothing: antialiased;
 }
-.xterm-viewport::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 4px;
+
+/* Blinking cursor animation */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* ASCII Logo adjustment so it doesn't wrap on mobile */
+.ascii-logo {
+  font-size: 8px;
+  line-height: 1.1;
+  letter-spacing: -0.05em;
+  white-space: pre;
+}
+@media (min-width: 400px) {
+  .ascii-logo { font-size: 10px; }
+}
+@media (min-width: 600px) {
+  .ascii-logo { font-size: 14px; }
 }
